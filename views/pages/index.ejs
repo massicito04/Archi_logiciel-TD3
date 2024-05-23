@@ -1,10 +1,27 @@
-<table>
 
-<tr> <td><input type="checkbox"/></td> <td><input type="checkbox"/></td> <td><input type="checkbox"/></td> </tr>
+<form action ="/submit" method="post">
 
-<tr> <td><input type="checkbox"/></td> <td><input type="checkbox"/></td> <td><input type="checkbox"/></td> </tr>
+<script>
+    function resetCheckboxes() {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = false;
+            });
+        }
+</script>
 
-<tr> <td><input type="checkbox"/></td> <td><input type="checkbox"/></td> <td><input type="checkbox"/></td> </tr>
+<table border="1" width="50%" height="500" align="center">
+    <% for(var i = 0; i < 3; i++) { %>
+        <tr style="text-align:center;">
+            <% for(var j = 0; j < 3; j++) { %>
+                <td><input type="checkbox" name="checkbox-<%= i %>-<%= j%>"></td>
+            <% } %>
+        </tr>
+    <% } %> 
 
+    <div style="text-align:center; margin-top: 20px;">
+        <button type="button" onclick="resetCheckboxes()">Reset</button>
+    </div>
+    
 </table>
-
+</form>
