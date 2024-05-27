@@ -52,6 +52,14 @@ app.post('/submit', (req, res) => {
     }
 });
 
+app.post('/reset', (req)=> {
+    gameState = [
+        ['','',''],
+        ['','',''],
+        ['','','']
+    ];
+    res.redirect('/');
+}); 
 
 
 app.listen(port, () => {
