@@ -41,8 +41,15 @@ res.render('pages/index');
 });
 
 app.post('/submit', (req, res) => {
-    const checkboxes = req.body;
-    
+    const { choice } = req.body
+    const [row, col] = choice.split('-').map(Number); 
+    if(state[row,col] === ''){
+        state[row, col] === 'X'; 
+        if(checkWinner('X')){
+            res.send('Wow, le joueur X à gagner')
+            return; 
+        } 
+    }
 });
 
 
