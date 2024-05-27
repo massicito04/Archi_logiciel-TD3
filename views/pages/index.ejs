@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html>
-<form action ="/submit" method="post">
 
+<body>
+<form action ="/submit" method="post">
 <table border="1" width="50%" height="500" align="center">
     <% for(var i = 0; i < 3; i++) { %>
         <tr style="text-align:center;">
             <% for(var j = 0; j < 3; j++) { %>
                 <td>
                     <% if (state[i][j] === '') { %>
-                    <input type="radio" name="choix" value="<%= i %>-<%= j %>">
+                    <input type="radio" name="choice" value="<%= i %>-<%= j %>">
                     <% } else { %>
                         <%= state[i][j] %>
                     <% } %> 
@@ -25,4 +26,5 @@
 <form action="/reset" method="POST">
     <button type="submit">Relancer</button>
 </form>
+</body>
 </html>
