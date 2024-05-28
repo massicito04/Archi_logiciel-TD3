@@ -1,30 +1,28 @@
 <!DOCTYPE html>
 <html>
-
 <body>
-<form action ="/submit" method="post">
-<table border="1" width="50%" height="500" align="center">
-    <% for(var i = 0; i < 3; i++) { %>
-        <tr style="text-align:center;">
-            <% for(var j = 0; j < 3; j++) { %>
-                <td>
-                    <% if (state[i][j] === '') { %>
-                    <input type="radio" name="choice" value="<%= i %>-<%= j %>">
-                    <% } else { %>
-                        <%= state[i][j] %>
-                    <% } %> 
-                </td>
-            <% } %>
-        </tr>
-    <% } %> 
-
-    <div style="text-align:center; margin-top: 20px;">
-        <button type="submit">Validate</button>
-    </div>
-</table>
-</form>
-<form action="/reset" method="POST">
-    <button type="submit">Relancer</button>
-</form>
+    <form action="/submit" method="post">
+        <table border="1" width="50%" height="500" align="center">
+            <% for(var i = 0; i < 3; i++) { %>
+                <tr style="text-align:center;">
+                    <% for(var j = 0; j < 3; j++) { %>
+                        <td>
+                            <% if(state[i][j] === '') { %>
+                            <input type="radio" name="choice" value="<%= i %>-<%= j %>">
+                            <% } else { %>
+                                <%= state[i][j] %>
+                            <% } %> 
+                        </td>
+                    <% } %>
+                </tr>
+            <% } %> 
+        </table>
+        <div style="text-align:center; margin-top: 20px;">
+            <button type="submit">Validate</button>
+        </div>
+    </form>
+    <form action="/reset" method="POST">
+        <button type="submit">Relancer</button>
+    </form>
 </body>
 </html>
