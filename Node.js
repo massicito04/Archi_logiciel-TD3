@@ -9,12 +9,29 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
 const client = new Client ({
-    host: 'localhost', 
+    host: "127.0.0.1", 
     port: 5432, 
-    user: 'postgres',
-    password: 'bonpoulet',
-    database: 'morpion',   
+    user: "postgres",
+    password: "bonpoulet",
+    database: "morpion",   
 
+}); 
+
+client
+	.connect()
+	.then(() => {
+		console.log('Connected to PostgreSQL database');
+	})
+	.catch((err) => {
+		console.error('Erreur lors de la connection', err);
+	});
+
+client.query('SELECT * from game', (err,result) => {
+    if(err){
+        console.error('Erreur dans l\'execution de la query', err); 
+    } else {
+        console.log('Resultat de la requete', result)
+    }
 }); 
 
 let state = [
