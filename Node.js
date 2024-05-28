@@ -26,14 +26,6 @@ client
 		console.error('Erreur lors de la connection', err);
 	});
 
-client.query('SELECT * from game', (err,result) => {
-    if(err){
-        console.error('Erreur dans l\'execution de la query', err); 
-    } else {
-        console.log('Resultat de la requete', result)
-    }
-}); 
-
 let state = [
     ['','',''],
     ['','',''],
@@ -59,7 +51,7 @@ function checkWinner(symbol){
 }
 
 app.get('/', (req, res) => {
-    res.render('pages/index', { title: 'Jeu de morpion', message: 'Morpion', state });
+    res.render('pages/accueil', { title: 'Accueil', message: 'Morpion', state });
 });
 
 app.post('/submit', (req, res) => {
