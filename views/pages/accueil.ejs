@@ -2,10 +2,14 @@
 <html>
 <body>
     <h1>Bienvenue dans le Morpion</h1>
-    <p>Appuyer sur "Commencer" pour créer un nouvelle partie</p>
+    <p>Appuyez sur "Commencer" pour créer une nouvelle partie ou "Reprendre la partie" pour continuer la partie en cours</p>
     
     <form action="/newgame" method="POST">
         <button type="submit">Commencer</button>
+    </form>
+
+    <form action="/loadgame" method="POST">
+        <button type="submit">Reprendre la partie</button>
     </form>
 </body>
 </html>
