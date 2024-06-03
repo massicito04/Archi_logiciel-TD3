@@ -86,7 +86,7 @@ async function loadGameSate() {
 
 // Fonction saveGameState qui va sauvegarder l'état dans la base de données
 async function saveGameState() {
-    const query = 'INSERT INTO game (id, state, player) VALUES (1, $1, $2) ON CONFLICT (id) DO UPDATE SET state = EXCLUDED.state, player = EXCLUDED.player;';
+    const query = 'UPDATE game SET state = $1, player = $2 WHERE id = 1;';
     const values = [JSON.stringify(state), currentPlayer];
     try {
         await client.query(query, values);
@@ -161,3 +161,35 @@ app.post('/reset', async (req, res) => {
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);
 });
+
+app.get('/api/game/state', (req, res) => {
+    res.json({ state: state });
+});
+
+app.post('/api/game/new', (req,res) => {
+    state =  [
+        ['', '', ''],
+        ['', '', ''],
+        ['', '', '']
+    ];
+    currentPlayer ='X'; 
+    res.json({ message: 'Nouvelle partie créée avec succès', state: state });
+})
+
+app.post('/api/game/move', (req, res) => {
+    const { row, col } = req.body;
+
+    if (isValidMove(row, col)) {
+        state[row][col] = currentPlayer;
+
+        currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+        
+        res.json({ message: 'Coup joué avec succès!', state: state });
+    } else {
+        res.status(400).json({ message: 'Coordonnées de mouvement invalides!' });
+    }
+});
+
+function isValidMove(row, col) {
+    return row >= 0 && row < 3 && col >= 0 && col < 3 && state[row][col] === '';
+}
