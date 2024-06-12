@@ -160,36 +160,79 @@ app.post('/reset', async (req, res) => {
 
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);
-});
+}); 
 
-app.get('/api/game/state', (req, res) => {
-    res.json({ state: state });
-});
 
-app.post('/api/game/new', (req,res) => {
-    state =  [
+app.post('/api/games', async (req, res) => {
+    const initialState = [
         ['', '', ''],
         ['', '', ''],
         ['', '', '']
     ];
-    currentPlayer ='X'; 
-    res.json({ message: 'Nouvelle partie créée avec succès', state: state });
-})
-
-app.post('/api/game/move', (req, res) => {
-    const { row, col } = req.body;
-
-    if (isValidMove(row, col)) {
-        state[row][col] = currentPlayer;
-
-        currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-        
-        res.json({ message: 'Coup joué avec succès!', state: state });
-    } else {
-        res.status(400).json({ message: 'Coordonnées de mouvement invalides!' });
+    const initialPlayer = 'X';
+    const query = 'INSERT INTO game (state, player) VALUES ($1, $2) RETURNING id;';
+    const values = [JSON.stringify(initialState), initialPlayer];
+    
+    try {
+        const result = await client.query(query, values);
+        const gameId = result.rows[0].id;
+        res.status(201).json({ message: 'Nouvelle partie créée avec succès', gameId: gameId });
+    } catch (err) {
+        console.error('Erreur lors de la création de la partie', err);
+        res.status(500).json({ message: 'Erreur lors de la création de la partie' });
     }
 });
 
-function isValidMove(row, col) {
-    return row >= 0 && row < 3 && col >= 0 && col < 3 && state[row][col] === '';
-}
+app.put('/api/games/:id', async (req, res) => {
+    try {
+      const gameId = req.params.id;
+      const { cell } = req.body;
+  
+      if (!cell) {
+        res.status(400).json({ error: 'Cell not selected' });
+        return;
+      }
+  
+      const [i, j] = cell.split('-').map(Number);
+  
+      const result = await pool.query('SELECT state, player FROM games WHERE id = $1', [gameId]);
+      const { state, player } = result.rows[0];
+      let boardState = JSON.parse(state);
+  
+      if (boardState[i][j] !== '') {
+        res.status(400).json({ error: 'Cell already filled' });
+        return;
+      }
+  
+      boardState[i][j] = player;
+  
+      const winner = checkWinner(boardState);
+      if (winner) {
+        await endGame(gameId, boardState, res);
+      } else {
+        const nextPlayer = player === 'X' ? 'O' : 'X';
+        await pool.query('UPDATE games SET state = $1, player = $2 WHERE id = $3', [JSON.stringify(boardState), nextPlayer, gameId]);
+        res.json({ state: boardState, player: nextPlayer });
+      }
+  
+    } catch (error) {
+      console.error('Error playing move:', error);
+      res.status(500).send('Internal Server Error');
+    }
+  });
+
+app.get('/api/games/:id', async (req, res) => {
+    const gameId = req.params.id;
+
+    try {
+        const result = await client.query('SELECT * FROM game WHERE id = $1', [gameId]);
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: 'Partie non trouvée' });
+        }
+        const game = result.rows[0];
+        res.json({ state: JSON.parse(game.state), currentPlayer: game.player, finished: game.finished });
+    } catch (err) {
+        console.error('Erreur lors de la récupération de la partie', err);
+        res.status(500).json({ message: 'Erreur lors de la récupération de la partie' });
+    }
+});
