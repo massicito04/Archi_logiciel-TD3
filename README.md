@@ -6,6 +6,8 @@ Pour l'application Morpion sans React
 npm install express pg body-parser 
 
 Pour l'application Morpion avec React pas besoin
+npm install express pg cors dotenv
+
 
 
 
